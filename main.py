@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from youtube_transcript_api import YouTubeTranscriptApi
 from pytubefix import YouTube
 from pytubefix.cli import on_progress
+import uuid
+import datetime
 
 
 app = FastAPI()
@@ -48,7 +50,14 @@ def download_video(video_id: str):
         video_url = f"https://www.youtube.com/watch?v={video_id}"
         yt = YouTube(video_url, on_progress_callback=on_progress)
         ys = yt.streams.get_audio_only()
-        ys.download(output_path="/Users/rishi/Downloads", filename="my_custom_name.m4a")
-        return {"path": "/Users/rishi/Downloads/my_custom_name.m4a", "status": "downloaded"}
+
+        # Generate unique filename
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        unique_id = str(uuid.uuid4())[:8]
+        filename = f"audio_{video_id}_{timestamp}_{unique_id}.m4a"
+
+        ys.download(output_path="/Users/rishi/Downloads", filename=filename)
+        full_path = f"/Users/rishi/Downloads/{filename}"
+        return {"path": full_path, "status": "downloaded", "filename": filename}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
