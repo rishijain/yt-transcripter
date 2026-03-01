@@ -56,8 +56,8 @@ def download_video(video_id: str):
         unique_id = str(uuid.uuid4())[:8]
         filename = f"audio_{video_id}_{timestamp}_{unique_id}.m4a"
 
-        ys.download(output_path="/Users/rishi/Downloads", filename=filename)
-        full_path = f"/Users/rishi/Downloads/{filename}"
+        ys.download(output_path="/tmp", filename=filename)
+        full_path = f"/tmp/{filename}"
         return {"path": full_path, "status": "downloaded", "filename": filename}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
